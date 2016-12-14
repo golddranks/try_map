@@ -1,6 +1,7 @@
 [package]
 name = "try_map"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Pyry Kontio <pyry.kontio@drasa.eu>"]
+description = "`try_map` and `flip` methods for `Option`. These allow more ergonomic error handling when mapping functions that return `Result` over `Option`."
 
 [dependencies]
