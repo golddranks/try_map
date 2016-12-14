@@ -1,5 +1,6 @@
 # try_map
-`try_map` and `flip` methods for `Option`. These allow more ergonomic error handling when mapping functions that return `Result` over `Option`.
+`try_map` method for `Option` and `flip` method for `Option` and `Vec`. These helper methods allow more ergonomic error handling when mapping
+functions that return `Result`, over collections.
 
 ## How to use:
 
@@ -41,3 +42,6 @@ Use the `try_map` and `flip` methods like a boss!
 There is an open issue in the Rust RFC repo suggesting bringing these helper methods to the standard library: https://github.com/rust-lang/rfcs/issues/1815
 Thanks for @killercup for suggesting implementing these in a 3rd party crate. This way they are immediately useful. (My claim is that they would be still
 useful in the standard library, though!)
+
+It seems that to be able to abstract the trait providing `try_map` over different kinds of collections, we need a support for higher-kinded types or associated
+type constructors. However, the `flip` method seems to be implementable for all kinds of things just using associated types.

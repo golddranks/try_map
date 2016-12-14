@@ -11,10 +11,14 @@
 /// - `U`: The outputs `Option`'s value type
 /// - `E`: The possible error during the mapping
 pub trait FallibleMapExt<T, U, E> {
+
     /// Try to apply a fallible map function to the option
     fn try_map<F>(self, f: F) -> Result<Option<U>, E> where
         F: FnOnce(T) -> Result<U, E>;
+
 }
+
+// Implementions
 
 impl<T, U, E> FallibleMapExt<T, U, E> for Option<T> {
     fn try_map<F>(self, f: F) -> Result<Option<U>, E> where
@@ -27,7 +31,8 @@ impl<T, U, E> FallibleMapExt<T, U, E> for Option<T> {
     }
 }
 
-/// Extend `Option<Result<T>>` with a `flip` method that scavenges the inner `Result`
+
+/// Extend `Option<Result<T>>` and Vec<Result<T>> with a `flip` method that scavenges the inner `Result`
 /// type and brings it to the outernmost type for easy error handling.
 ///
 /// This makes easy to `map`, `and_then` etc. with fallible (`Result`-returning)
@@ -38,16 +43,34 @@ impl<T, U, E> FallibleMapExt<T, U, E> for Option<T> {
 /// - `T`: The inner value type
 /// - `E`: The error type of `Result`
 pub trait FlipResultExt<T, E> {
-    fn flip(self) -> Result<Option<T>, E>;
+    type InnerType;
+
+    fn flip(self) -> Result<Self::InnerType, E>;
 }
 
 impl<T, E> FlipResultExt<T, E> for Option<Result<T, E>> {
+    type InnerType = Option<T>;
     fn flip(self) -> Result<Option<T>, E>
     {
         match self {
             Some(r) => r.map(Some),
             None => Ok(None),
         }
+    }
+}
+
+impl<T, E> FlipResultExt<T, E> for Vec<Result<T, E>> {
+    type InnerType = Vec<T>;
+    fn flip(self) -> Result<Vec<T>, E>
+    {
+        let mut result_vec = Vec::with_capacity(self.len());
+        for t in self {
+            match t {
+                Ok(u) => result_vec.push(u),
+                Err(e) => return Err(e),
+            }
+        }
+        Ok(result_vec)
     }
 }
 
@@ -138,5 +161,27 @@ mod tests {
             Ok(x)
         }
         assert_eq!(inner(), Err("oh noes"));
+    }
+
+    #[test]
+    fn test_flip_vec_1() {
+        fn inner() -> Result<Vec<i32>, &'static str> {
+            let x = vec![42, 100, 99, 1, 42, 10000]
+                .into_iter().map(|x| Ok(x + 1)).collect::<Vec<_>>().flip()?;
+        
+            Ok(x)
+        }
+        assert_eq!(inner(), Ok(vec![43, 101, 100, 2, 43, 10001]));
+    }
+
+    #[test]
+    fn test_flip_vec_2() {
+        fn inner() -> Result<Vec<i32>, &'static str> {
+            let x = vec![42, 100, 99, 1, 42, 10000]
+                .into_iter().map(|x| if true { Err("heatenings") } else { Ok(x + 1) }).collect::<Vec<_>>().flip()?;
+        
+            Ok(x)
+        }
+        assert_eq!(inner(), Err("heatenings"));
     }
 }
