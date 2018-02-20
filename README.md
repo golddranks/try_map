@@ -1,4 +1,7 @@
 # try_map
+**UPDATE 20th of Feb 2018**
+The Rust standard library is getting this functionality with name `transpose`, so this crate is going to fade away. The tracking issue is here: https://github.com/rust-lang/rust/issues/47338
+
 `try_map` method for `Option` and `flip` method for `Option` and `Vec`. These helper methods allow more ergonomic error handling when mapping
 functions that return `Result`, over collections.
 
