@@ -10,7 +10,7 @@ functions that return `Result`, over collections.
 Add to `Cargo.toml`:
 
     [dependencies]
-    try_map = "0.2"
+    try_map = "0.3"
 
 Bring the extension traits to the scope in your code: (`FallibleMapExt` is for enabling `try_map` and `FlipResultExt` is for enabling `flip`.)
 
