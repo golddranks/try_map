@@ -42,13 +42,13 @@ impl<T, U, E> FallibleMapExt<T, U, E> for Option<T> {
 ///
 /// - `T`: The inner value type
 /// - `E`: The error type of `Result`
-pub trait FlipResultExt<T, E> {
+pub trait FlipResultExt<T> {
     type ReturnType;
 
     fn flip(self) -> Self::ReturnType;
 }
 
-impl<T, E> FlipResultExt<T, E> for Option<Result<T, E>> {
+impl<T, E> FlipResultExt<T> for Option<Result<T, E>> {
     type ReturnType = Result<Option<T>, E>;
 
     fn flip(self) -> Result<Option<T>, E>
@@ -60,7 +60,7 @@ impl<T, E> FlipResultExt<T, E> for Option<Result<T, E>> {
     }
 }
 
-impl<T, E> FlipResultExt<T, E> for Vec<Result<T, E>> {
+impl<T, E> FlipResultExt<T> for Vec<Result<T, E>> {
     type ReturnType = Result<Vec<T>, E>;
     fn flip(self) -> Result<Vec<T>, E>
     {
@@ -75,7 +75,7 @@ impl<T, E> FlipResultExt<T, E> for Vec<Result<T, E>> {
     }
 }
 
-impl<T, E> FlipResultExt<T, E> for Vec<Option<T>> {
+impl<T> FlipResultExt<T> for Vec<Option<T>> {
     type ReturnType = Option<Vec<T>>;
     fn flip(self) -> Option<Vec<T>>
     {
